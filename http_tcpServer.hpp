@@ -1,5 +1,8 @@
-#ifndef HTTP_SERVER_HTTP_TCPSERVER_H
-#define HTTP_SERVER_HTTP_TCPSERVER_H
+#ifndef HTTP_SERVER_HTTP_TCPSERVER
+#define HTTP_SERVER_HTTP_TCPSERVER
+
+
+#pragma once
 
 #include <stdio.h>
 #include <winsock.h>
@@ -11,7 +14,7 @@ namespace http{
     public:
         TcpServer(std::string ip_address, int port);
         ~TcpServer();
-        coid startListen();
+        void startListen();
 
     private:
         std::string m_ip_address;
@@ -26,10 +29,10 @@ namespace http{
 
         int startServer();
         void closeServer();
-        coid acceptConnection(SOCKET &new_socket);
+        void acceptConnection(SOCKET &new_socket);
         std::string buildResponse();
         void sendResponse();
     };
 }//namespace http;
 
-#endif //HTTP_SERVER_HTTP_TCPSERVER_H
+#endif //HTTP_SERVER_HTTP_TCPSERVER

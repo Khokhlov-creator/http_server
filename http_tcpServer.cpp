@@ -1,4 +1,4 @@
-#include "http_tcpServer.h"
+#include "http_tcpServer.hpp"
 
 #include <iostream>
 #include <sstream>
@@ -14,6 +14,7 @@ namespace{
 
     void exitWithError(const std::string &errorMessage){
        std::cout << WSAGetLastError() << std::endl;
+       log("ERROR: " + errorMessage);
        exit(1);
     }
 }
@@ -23,7 +24,7 @@ namespace http{
     : m_ip_address(ip_address), m_port(port), m_socket(),
       m_new_socket(), m_incomingMessage(), m_socketAddress(),
       m_socketAddress_len(sizeof(m_socketAddress)),
-      m_serverMessage(buildResponse())
+      m_serverMessage(buildResponse()), m_wsaData()
     {
         m_socketAddress.sin_family = AF_INET;
         m_socketAddress.sin_port = htons(m_port);
@@ -77,12 +78,14 @@ namespace http{
 
         log(ss.str());
 
-        while()
+        int bytesReceived;
+
+        while(true)
         {
             log("------ Waiting for a new connection ------\n\n\n");
             acceptConnection(m_new_socket);
 
-            char buffer[BUFF_SIZE]={ 0 };
+            char buffer[BUFFER_SIZE]={ 0 };
             bytesReceived = recv(m_new_socket, buffer, BUFFER_SIZE, 0);
             if(bytesReceived<0)
                 exitWithError("Failed to receive bytes from client socket connection");
