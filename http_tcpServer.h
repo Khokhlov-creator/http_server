@@ -27,7 +27,7 @@ namespace http{
         int startServer();
         void closeServer();
         coid acceptConnection(SOCKET &new_socket);
-        std::string build();
+        std::string buildResponse();
         void sendResponse();
     };
 }//namespace http;

@@ -97,7 +97,40 @@ namespace http{
         }
     }
 
-    void TcpServer::acceptConnection(SOCKET)
+    void TcpServer::acceptConnection(SOCKET &new_socket){
+        new_socket = accept(m_socket, (sockaddr *)&m_socketAddress, &m_socketAddress_len);
+        if(new_socket<0){
+            std::ostringstream ss;
+            ss<<"Server failed to accept incoming connection from ADDRESS: "<< inet_ntoa(m_socketAddress.sin_addr)<<"; PORT: "
+              <<ntohs(m_socketAddress.sin_port);
+            exitWithError(ss.str());
+        }
+    }
+
+    std::string TcpServer::buildResponse(){
+        std::string htmlFile = "<!DOCTYPE html><html lang=\"en\"><body><h1> HOME </h1><p> Hello from your Server :) </p></body></html>";
+        std::ostringstream ss;
+        ss<<"HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: " << htmlFile.size() << "\n\n"
+          << htmlFile;
+
+        return ss.str();
+    }
+
+    void TcpServer::sendResponse(){
+        int bytesSent;
+        long totalBytesSent = 0;
+
+        while (totalBytesSent<m_serverMessage.size()){
+            bytesSent = send(m_new_socket, m_serverMessage.c_str(), m_serverMessage.size(),0);
+            if(bytesSent<0){ break; }
+            totalBytesSent += bytesSent;
+        }
+        if(totalBytesSent == m_serverMessage.size())
+            log("------ Server response sent to client ------\n\n");
+        else
+            log("Error sending response to client");
+    }
+
 
 
 }//namespace http
