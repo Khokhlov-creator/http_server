@@ -11,6 +11,7 @@ namespace http{
     public:
         TcpServer(std::string ip_address, int port);
         ~TcpServer();
+        coid startListen();
 
     private:
         std::string m_ip_address;
@@ -24,7 +25,10 @@ namespace http{
         WSADATA m_wsaData;
 
         int startServer();
-        coid closeServer();
+        void closeServer();
+        coid acceptConnection(SOCKET &new_socket);
+        std::string build();
+        void sendResponse();
     };
 }//namespace http;
 
